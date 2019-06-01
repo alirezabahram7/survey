@@ -17,6 +17,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::apiResources([
-    'poll'=>'PollController',
-    'question'=>'QuestionController'
+    'poll' => 'PollController',
+    'question' => 'QuestionController',
+    'option' => 'OptionController'
 ]);
