@@ -16,10 +16,13 @@ class CreatePollsTable extends Migration
         Schema::create('polls', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedInteger('app_id');
+            $table->unsignedBigInteger('parent_id')->nullable();
             $table->string('title');
             $table->string('description')->nullable();
             $table->string('first_text')->nullable();
             $table->string('final_text')->nullable();
+            $table->date('start_date')->nullable();
+            $table->date('end_date')->nullable();
             $table->boolean('is_active')->default(1);
             $table->timestamps();
         });

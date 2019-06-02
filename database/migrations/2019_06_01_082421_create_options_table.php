@@ -17,6 +17,7 @@ class CreateOptionsTable extends Migration
             $table->bigIncrements('id');
             $table->unsignedBigInteger('question_id');
             $table->string('text');
+            $table->string('description')->nullable();
             $table->integer('position')->nullable();
             $table->integer('weight')->nullable();
             $table->boolean('is_active')->default(1);
