@@ -45,7 +45,7 @@ class PollController extends Controller
         /***********************store************************/
         $newPoll = Poll::create($requestData);
 
-        return response($newPoll, 201);
+        return response(new BasicResource($newPoll), 201);
     }
 
     /**

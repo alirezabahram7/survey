@@ -6,6 +6,10 @@ use App\Http\Resources\BasicCollectionResource;
 use App\Http\Resources\BasicResource;
 use Illuminate\Http\Request;
 use App\Question;
+use Illuminate\Support\Facades\Validator;
+use App\Option;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\AnswerType;
 
 class QuestionController extends Controller
 {
@@ -39,33 +43,19 @@ class QuestionController extends Controller
             ], 400);
         }
 
-        $poll = Poll::where(['id' => $requestData['poll_id']])->first();
-        if (empty($poll)) {
-            throw new ModelNotFoundException();
-        }
-
         /*******************************************************/
         $newQuestion = Question::create($requestData);
 
-        if (!$newQuestion) {
-            return response([
-                'message' => 'خطا در ثبت پرسش جدید! مجددا سعی کنید.',
-            ], 501);
-        }
-
-        $answerType = AnswerType::where('id', $requestData['answer_type_id'])->first();
-        /*نوع پاسخ تایپی نباشد.*/
-        if (!($answerType->alias == 'txt')) {
+        if ($newQuestion->answer_type_id > 1) {
             /*گزینه های انتخابی نیز ارسال شده باشد.*/
-            if (!empty($requestData['option'])) {
-
+            if (!empty($requestData['options'])) {
                 foreach ($requestData['options'] AS $option) {
-
                     $option['question_id'] = $newQuestion->id;
                     Option::create($option);
                 }
             }
         }
+
         return response(new BasicResource($newQuestion), 201);
     }
 

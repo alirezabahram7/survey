@@ -30,6 +30,8 @@ class CreateQuestionsTable extends Migration
         Schema::table('questions', function (Blueprint $table) {
             $table->foreign('poll_id')->references('id')->on('polls')->onDelete('cascade');
             $table->foreign('answer_type_id')->references('id')->on('answer_types')->onDelete('cascade');
+            $table->unsignedBigInteger('category_id')->nullable();
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
     }
 

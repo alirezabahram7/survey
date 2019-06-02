@@ -16,8 +16,22 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+//app
+Route::get('/app', 'AppController@index');
+Route::get('/app/{id}', 'AppController@show');
+
 Route::apiResources([
     'poll' => 'PollController',
+    'category' => 'CategoryController',
     'question' => 'QuestionController',
-    'option' => 'OptionController'
+    'option' => 'OptionController',
+    'answer' => 'AnswerController',
+    'voter' => 'VoterController'
 ]);
+
+Route::get('/answer-type', 'AnswerType@index');
+
+//Report
+Route::get('/voters-count/{id}', 'PollReportController@pollVotersCount');
+Route::get('/option-percentage/{id}', 'PollReportController@optionsPercentage');
