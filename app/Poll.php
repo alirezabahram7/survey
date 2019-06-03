@@ -43,8 +43,4 @@ class Poll extends Model
         return $this->hasMany('App\Category', 'poll_id');
     }
 
-    public function voters()
-    {
-        return $this->belongsToMany('App\Voter');
-    }
 }

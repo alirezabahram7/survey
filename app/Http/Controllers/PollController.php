@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\BasicCollectionResource;
 use App\Http\Resources\BasicResource;
-use App\Http\Resources\PollCollectionResource;
-use http\Exception\RuntimeException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Poll;
@@ -71,39 +69,37 @@ class PollController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Poll $poll
+     * @return \Exception|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Poll $poll)
     {
-        $poll = Poll::where('id', $id)
-            ->first();
-        if(!$poll) {
+        if (!$poll) {
             throw new ModelNotFoundException();
         }
 
         $requestData = $request->all();
 
-        $result = $poll->update($requestData);
-        if(!$result) {
-            return new \Exception();
-        }
+        $poll->update($requestData);
 
-        return response(new BasicResource($result),200);
+        return response('Poll Updated', 200);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @param Poll $poll
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @throws \Exception
      */
-    public function destroy($id)
+    public function destroy(Poll $poll)
     {
-        $poll = Poll::findOrFail($id)->first();
+        if (!$poll) {
+            throw new ModelNotFoundException();
+        }
         $poll->delete();
 
-        return response('deleted',204);
+        return response('deleted', 204);
     }
 }

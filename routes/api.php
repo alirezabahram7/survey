@@ -19,19 +19,18 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 //app
 Route::get('/app', 'AppController@index');
-Route::get('/app/{id}', 'AppController@show');
+Route::get('/app/{app}', 'AppController@show');
 
 Route::apiResources([
     'poll' => 'PollController',
     'category' => 'CategoryController',
     'question' => 'QuestionController',
     'option' => 'OptionController',
-    'answer' => 'AnswerController',
-    'voter' => 'VoterController'
+    'answer' => 'AnswerController'
 ]);
 
-Route::get('/answer-type', 'AnswerType@index');
+Route::get('/answer-type', 'AnswerTypeController@index');
 
 //Report
-Route::get('/voters-count/{id}', 'PollReportController@pollVotersCount');
+Route::get('/voters-count/{pollId}', 'PollReportController@pollVotersCount');
 Route::get('/option-percentage/{id}', 'PollReportController@optionsPercentage');

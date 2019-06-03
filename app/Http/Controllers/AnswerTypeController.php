@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Resources\BasicCollectionResource;
+use App\AnswerType;
 
 class AnswerTypeController extends Controller
 {
-    public function index(Request $request)
+    /**
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
+    public function index()
     {
-        $rows = AnswerType::get();
-        return $this->_outPut([
-            'data' => $rows,
-        ], 200);
+        $answerTypes = AnswerType::all();
+        return response(new BasicCollectionResource($answerTypes));
     }
 }

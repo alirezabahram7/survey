@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
-
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Http\Resources\BasicResource;
 use Illuminate\Http\Request;
+use App\Http\Resources\BasicCollectionResource;
 use App;
 use App\Category;
 use App\Poll;
@@ -16,17 +18,19 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::all();
-        return response($categories);
+        return response(new BasicCollectionResource($categories));
     }
 
     /**
-     * @param $id
+     * @param Category $category
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(category $category)
     {
-        $category = Category::find($id);
-        return response($category);
+        if (!$category) {
+            throw new ModelNotFoundException('Entry doesnt found');
+        }
+        return response(new BasicResource($category));
     }
 
     /**
@@ -35,13 +39,12 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-
         $requestData = $request->all();
 
         $poll = Poll::where(['id' => $requestData['poll_id']])->first();
 
         if (empty($poll)) {
-            return response()->json(['error' => 'نظرسنجی مورد نظر یافت نشد'], 204);
+            throw new ModelNotFoundException('Entry doesnt found');
         }
 
         if (!empty($requestData['parent_id'])) {
@@ -51,65 +54,45 @@ class CategoryController extends Controller
             )
                 ->first();
             if (!$parentCategory) {
-                return response()->json(['error' => 'دسته بندی  والد وجود ندارد'], 204);
+                throw new ModelNotFoundException('Parent Entry doesnt found');
             }
         }
 
-        $category = Category::create($requestData);
+        Category::create($requestData);
 
-
-        return response()->json([
-            'code' => 1,
-            'result' => true,
-        ], 201, $this->__headers);
+        return response('Category Saved', 201);
     }
 
     /**
      * @param Request $request
-     * @param $id
-     * @return \Illuminate\Http\JsonResponse
+     * @param Category $category
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Category $category)
     {
-        $category = Category::where('id', $id)
-            ->first();
         if (!$category) {
-            return response()->json([
-                'code' => 0,
-                'error' => 'دسته بندی مورد نظر یافت نشد!',
-            ], 204, $this->__headers);
+            throw new ModelNotFoundException('Entry didnt find');
         }
 
         $requestData = $request->all();
 
-        $result = $category->update($requestData);
+        $category->update($requestData);
 
-        if (!$result) {
-            return response()->json([
-                'code' => 0,
-                'error' => 'خطا در عملیات مجددا سعی کنید!',
-            ], 501, $this->__headers);
-        }
-
-        return response()->json([
-            'code' => 1,
-            'result' => true,
-        ], 200, $this->__headers);
+        return response('Category Updated', 201);
     }
 
     /**
-     * @param $id
-     * @return \Illuminate\Http\JsonResponse
+     * @param Category $category
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @throws \Exception
      */
-    public function destroy($id)
+    public function destroy(Category $category)
     {
-        $category = Category::where('id', $id)
-            ->first();
+        if (!$category) {
+            throw new ModelNotFoundException('Entry doesnt found');
+        }
         $category->delete();
 
-        return response()->json([
-            'code' => 1,
-            'result' => true,
-        ], 200, $this->__headers);
+        return response('deleted', 204);
     }
 }

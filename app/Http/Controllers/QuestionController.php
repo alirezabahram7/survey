@@ -9,7 +9,6 @@ use App\Question;
 use Illuminate\Support\Facades\Validator;
 use App\Option;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use App\AnswerType;
 
 class QuestionController extends Controller
 {
@@ -23,7 +22,7 @@ class QuestionController extends Controller
         $questions = Question::with('poll')
             ->with('options')->get();
 
-        return response(new BasicCollectionResource($questions), 200);
+        return response(new BasicCollectionResource($questions), 201);
     }
 
     /**
@@ -85,52 +84,43 @@ class QuestionController extends Controller
      * @param  int $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Question $question)
     {
-        $question = Question::where('id', $id)
-            ->first();
-
         if (!$question) {
             throw new ModelNotFoundException();
         }
 
         $requestData = $request->all();
         $result = $question->update($requestData);
-        if (!$result) {
-            return response([
-                'message' => 'خطا در عملیات مجددا سعی کنید!',
-            ], 501);
-        }
 
         /*به روز رسانی آیتم ها*/
         if (!empty($requestData['options'])) {
             /*حذف آیتم های قبلی*/
-            $result = Option::where(['question_id' => $question->id])->delete();
-            if (!$result) {
-                return response([
-                    'message' => 'خطا در عملیات مجددا سعی کنید!',
-                ], 501);
-            }
+                Option::where(['question_id' => $question->id])->delete();
+
             /*درج آیتم های جدید*/
             foreach ($requestData['options'] AS $option) {
                 $option['question_id'] = $question->id;
                 Option::create($option);
             }
-            return response(new BasicResource($question), 201);
         }
 
-        return response(new BasicResource($question), 200);
+        return response(new BasicResource($question), 201);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @param Question $question
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @throws \Exception
      */
-    public function destroy($id)
+    public function destroy(Question $question)
     {
-        $question = Question::findOrFail($id)->first();
+        if (!$question) {
+            throw new ModelNotFoundException();
+        }
+
         $question->delete();
 
         return response('deleted', 204);
