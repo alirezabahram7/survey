@@ -47,4 +47,8 @@ class Question extends Model
     public function Category(){
         return $this->belongsTo('App\Category','category_id');
     }
+
+    public function answers(){
+        return $this->hasMany('App\Answer');
+    }
 }

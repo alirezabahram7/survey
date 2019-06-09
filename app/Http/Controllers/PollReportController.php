@@ -2,33 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Answer;
 use App\Http\Resources\BasicResource;
-use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Poll;
 use App\Option;
 
 class PollReportController extends Controller
 {
-    public function pollVotersCount($pollId)
+    /**
+     * @param Poll $poll
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
+    public function pollVotersCount(Poll $poll)
     {
-        $poll = Poll::findOrFail($pollId);
-        $votersCount=Answer::count('user_id');
+        if (!$poll) {
+            throw new ModelNotFoundException();
+        }
+        $votersCount = $poll->answers->count('user_id');
         return response($votersCount);
     }
 
-    public function optionsPercentage($optionId)
+    /**
+     * @param Option $option
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
+    public function optionsPercentage(Option $option)
     {
-        $option = Option::findOrFail($optionId);
-        $count = $option->answers->count('option_id');
-        $pollId = $option->question->poll->id;
-        $pollVoters = json_decode($this->pollVotersCount($pollId));
-        dd($pollVoters);
-        $votersCount = $pollVoters['data']['voters_count'];
+        if (!$option) {
+            throw new ModelNotFoundException();
+        }
+        $optionCount = $option->answers->count('option_id');
+        $poll = $option->question->poll;
+        $votersCount = $this->pollVotersCount($poll)->content();
 
         $result = [
-            'options_count' => $count,
-            'option_percentage' => ($votersCount == 0 ? 0 : (($count / $votersCount) * 100))
+            'options_count' => $optionCount,
+            'option_percentage' => ($votersCount == 0 ? 0 : (($optionCount / $votersCount) * 100))
         ];
 
         return response(new BasicResource($result), 201);

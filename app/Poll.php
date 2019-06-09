@@ -43,4 +43,8 @@ class Poll extends Model
         return $this->hasMany('App\Category', 'poll_id');
     }
 
+    public function answers(){
+        return $this->hasManyThrough('App\Answer','App\Question');
+    }
+
 }

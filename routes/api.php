@@ -32,5 +32,5 @@ Route::apiResources([
 Route::get('/answer-type', 'AnswerTypeController@index');
 
 //Report
-Route::get('/voters-count/{pollId}', 'PollReportController@pollVotersCount');
-Route::get('/option-percentage/{id}', 'PollReportController@optionsPercentage');
+Route::get('/voters-count/{poll}', 'PollReportController@pollVotersCount');
+Route::get('/option-percentage/{option}', 'PollReportController@optionsPercentage');
