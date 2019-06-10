@@ -26,7 +26,7 @@ Route::apiResources([
     'category' => 'CategoryController',
     'question' => 'QuestionController',
     'option' => 'OptionController',
-    'answer' => 'AnswerController'
+    '/{poll?}/answer' => 'AnswerController'
 ]);
 
 Route::get('/answer-type', 'AnswerTypeController@index');

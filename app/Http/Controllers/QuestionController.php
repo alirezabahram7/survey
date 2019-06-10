@@ -55,7 +55,7 @@ class QuestionController extends Controller
             }
         }
 
-        return response(new BasicResource($newQuestion), 201);
+        return response('Question Saved', 201);
     }
 
     /**
@@ -80,9 +80,9 @@ class QuestionController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Question $question
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
     public function update(Request $request, Question $question)
     {
@@ -91,21 +91,25 @@ class QuestionController extends Controller
         }
 
         $requestData = $request->all();
-        $result = $question->update($requestData);
+        $question->update($requestData);
 
         /*به روز رسانی آیتم ها*/
         if (!empty($requestData['options'])) {
-            /*حذف آیتم های قبلی*/
-                Option::where(['question_id' => $question->id])->delete();
-
             /*درج آیتم های جدید*/
-            foreach ($requestData['options'] AS $option) {
-                $option['question_id'] = $question->id;
-                Option::create($option);
+            foreach ($requestData['options'] AS $newOption) {
+                if (array_key_exists("id", $newOption)) {
+                    $option = Option::find($newOption['id']);
+                    if ($option) {
+                        $option->update($newOption);
+                        continue;
+                    }
+                }
+                $newOption['question_id'] = $question->id;
+                Option::create($newOption);
             }
         }
 
-        return response(new BasicResource($question), 201);
+        return response('Question Updated', 201);
     }
 
     /**

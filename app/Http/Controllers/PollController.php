@@ -53,12 +53,20 @@ class PollController extends Controller
     public function show($id)
     {
         $poll = Poll::where('id', $id)
+            ->with('parent')
+            ->with('children')
             ->with([
-                'questions' => function ($q) {
+                'categories.questions' => function ($q) {
                     $q->with('options');
                 }
             ])
+            ->with([
+                'questions' => function ($q) {
+                    $q->where('questions.category_id', '=', 0)->orWhere('questions.category_id', '=', null)->with('options');
+                }
+            ])
             ->first();
+
         if (!$poll) {
             throw new ModelNotFoundException();
         }

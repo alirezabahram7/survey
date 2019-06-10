@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Answer;
 use App\Http\Resources\BasicCollectionResource;
 use App\Http\Resources\BasicResource;
+use App\Poll;
 use App\Question;
 use Illuminate\Http\Request;
 
@@ -13,44 +14,44 @@ class AnswerController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param Poll $poll
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function index()
+    public function index(Poll $poll)
     {
-        $answers = Answer::all();
+        $answers =$poll->answers;
         return response(new BasicCollectionResource($answers), 201);
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Poll $poll
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Poll $poll)
     {
         $requestData = $request->all();
 
-        foreach ($requestData['question_id'] as $i => $questionId) {
-
-            $question = Question::findOrFail($questionId);
-
-            $answer = array(
-                'user_id' => $requestData['user_id'],
-                'app_id' => $requestData['app_id'],
-                'question_id' => $questionId,
+        foreach ($requestData as $i => $answer) {
+            $question = Question::findOrFail($answer['question_id']);
+            $answerItems = array(
+                'user_id' => 1,//auth()->user()->id,
+                'app_id' => $poll->app_id,
+                'question_id' => $question->id,
                 'option_id' => null,
                 'answer' => null,
             );
 
             if ($question->answer_type_id >= 2) {
-                foreach ($requestData['answer'][$i] as $optionId) {
-                    $answer['option_id'] = ((int)$optionId == 0) ? null : $optionId;
-                    Answer::create($answer);
+                foreach ($answer['answer'] as $optionId) {
+                    $answerItems['option_id'] = ((int)$optionId == 0) ? null : $optionId;
+                    Answer::create($answerItems);
                 }
             } else {
-                $answer['answer'] = $requestData['answer'][$i][0];
-                Answer::create($answer);
+                $answerItems['answer'] = $answer['answer'][0];
+                Answer::create($answerItems);
             }
         }
 
@@ -79,11 +80,12 @@ class AnswerController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \App\Answer $answer
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Poll $poll
+     * @param Answer $answer
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function update(Request $request, Answer $answer)
+    public function update(Request $request, Poll $poll,Answer $answer)
     {
         $requestData = $request->all();
         $question = Question::findOrFail($requestData['question_id']);
@@ -104,7 +106,7 @@ class AnswerController extends Controller
             $answer->update($answerItems);
         }
 
-        return response('Answer updated', 201);
+        return response(new BasicResource($requestData), 201);
     }
 
     /**
@@ -116,7 +118,7 @@ class AnswerController extends Controller
      */
     public function destroy(Answer $answer)
     {
-        if(!$answer){
+        if (!$answer) {
             throw new ModelNotFoundException("Entry does not Found");
         }
         $answer->delete();
