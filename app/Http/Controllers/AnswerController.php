@@ -106,7 +106,7 @@ class AnswerController extends Controller
             $answer->update($answerItems);
         }
 
-        return response(new BasicResource($requestData), 201);
+        return response('Answer Updated', 201);
     }
 
     /**
