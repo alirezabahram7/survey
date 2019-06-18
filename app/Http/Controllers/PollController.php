@@ -43,7 +43,7 @@ class PollController extends Controller
         /***********************store************************/
         $newPoll = Poll::create($requestData);
 
-        return response(new Basicgit saResource($newPoll), 201);
+        return response(new BasicResource($newPoll), 201);
     }
 
     /**
