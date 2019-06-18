@@ -67,7 +67,7 @@ class QuestionController extends Controller
     public function show($id)
     {
         $question = Question::where('id', $id)
-            ->with('poll')
+            ->with('options')
             ->first();
 
         if (!$question) {
@@ -93,20 +93,10 @@ class QuestionController extends Controller
         $requestData = $request->all();
         $question->update($requestData);
 
-        /*به روز رسانی آیتم ها*/
+        /*replace options*/
         if (!empty($requestData['options'])) {
-            /*درج آیتم های جدید*/
-            foreach ($requestData['options'] AS $newOption) {
-                if (array_key_exists("id", $newOption)) {
-                    $option = Option::find($newOption['id']);
-                    if ($option) {
-                        $option->update($newOption);
-                        continue;
-                    }
-                }
-                $newOption['question_id'] = $question->id;
-                Option::create($newOption);
-            }
+            $question->options()->delete();
+            $question->options()->createMany($requestData['options']);
         }
 
         return response('Question Updated', 201);
