@@ -119,4 +119,9 @@ class QuestionController extends Controller
 
         return response('deleted', 204);
     }
+
+    public function setPositions($pollId) {
+        $questions = Question::where('poll_id',$pollId)->with('options')->get();
+
+    }
 }

@@ -34,3 +34,4 @@ Route::get('/answer-type', 'AnswerTypeController@index');
 //Report
 Route::get('/voters-count/{poll}', 'PollReportController@pollVotersCount');
 Route::get('/option-percentage/{option}', 'PollReportController@optionsPercentage');
+Route::get('/report/{poll}','PollReportController@pollReport');

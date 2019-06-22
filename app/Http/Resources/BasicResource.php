@@ -10,12 +10,13 @@ class BasicResource extends JsonResource
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request $request
+     * @param string $sign
      * @return array
      */
-    public function toArray($request)
+    public function toArray($request, $sign = 'data')
     {
         return [
-            'data' => $this->resource
+            $sign => $this->resource
         ];
     }
 }
