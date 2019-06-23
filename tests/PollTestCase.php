@@ -49,6 +49,22 @@ class PollTestCase extends TestCase
     }
 
     /**
+     * @param bool $hasHeader
+     * @param array $overrides
+     * @return \Illuminate\Foundation\Testing\TestResponse
+     */
+    protected function deletePoll($hasHeader = false, $overrides = [])
+    {
+        $poll = $this->_addPoll($overrides, 'create');
+
+
+        $this->addHeader($hasHeader);
+
+        $response = $this->delete('/api/poll/' . $poll->id);
+        return $response;
+    }
+
+    /**
      * @param $overrides
      * @param string $addingType
      * @return mixed
