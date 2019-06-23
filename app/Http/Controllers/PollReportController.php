@@ -100,7 +100,6 @@ class PollReportController extends Controller
             ]
         ];
         return response(new BasicResource($result), 201);
-
     }
 
 }

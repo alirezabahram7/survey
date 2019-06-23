@@ -17,21 +17,24 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-//app
-Route::get('/app', 'AppController@index');
-Route::get('/app/{app}', 'AppController@show');
+Route::middleware('auth.fitamin')->group(function () {
 
-Route::apiResources([
-    'poll' => 'PollController',
-    'category' => 'CategoryController',
-    'question' => 'QuestionController',
-    'option' => 'OptionController',
-    '/{poll?}/answer' => 'AnswerController'
-]);
+    //app
+    Route::get('/app', 'AppController@index');
+    Route::get('/app/{app}', 'AppController@show');
 
-Route::get('/answer-type', 'AnswerTypeController@index');
+    Route::apiResources([
+        'poll' => 'PollController',
+        'category' => 'CategoryController',
+        'question' => 'QuestionController',
+        'option' => 'OptionController',
+        '/{poll?}/answer' => 'AnswerController'
+    ]);
 
-//Report
-Route::get('/voters-count/{poll}', 'PollReportController@pollVotersCount');
-Route::get('/option-percentage/{option}', 'PollReportController@optionsPercentage');
-Route::get('/report/{poll}','PollReportController@pollReport');
+    Route::get('/answer-type', 'AnswerTypeController@index');
+
+    //Report
+    Route::get('/voters-count/{poll}', 'PollReportController@pollVotersCount');
+    Route::get('/option-percentage/{option}', 'PollReportController@optionsPercentage');
+    Route::get('/report/{poll}', 'PollReportController@pollReport');
+});
