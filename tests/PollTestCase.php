@@ -25,12 +25,26 @@ class PollTestCase extends TestCase
     {
         $poll = $this->_addPoll($overrides, 'make');
 
-        if ($hasHeader) {
-            $this->withHeader('x-api-key', $this->apiKey);
-        }
+        $this->addHeader($hasHeader);
 
         $response = $this->post('/api/poll', $poll->toArray());
 
+        return $response;
+    }
+
+    /**
+     * @param $id
+     * @param bool $hasHeader
+     * @param array $overrides
+     * @return \Illuminate\Foundation\Testing\TestResponse
+     */
+    protected function editPoll($id, $hasHeader = false, $overrides = [])
+    {
+        $poll = $this->_addPoll($overrides, 'make');
+
+        $this->addHeader($hasHeader);
+
+        $response = $this->patch('/api/poll/' . $id, $poll->toArray());
         return $response;
     }
 
@@ -48,5 +62,15 @@ class PollTestCase extends TestCase
         $poll = make('App\Poll', $overrides);
         return $poll;
 
+    }
+
+    /**
+     * @param $hasHeader
+     */
+    protected function addHeader($hasHeader): void
+    {
+        if ($hasHeader) {
+            $this->withHeader('x-api-key', $this->apiKey);
+        }
     }
 }

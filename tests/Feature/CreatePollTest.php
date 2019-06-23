@@ -9,10 +9,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class CreatePollTest extends PollTestCase
 {
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
 
     public function test_a_guest_may_not_add_a_poll()
     {
