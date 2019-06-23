@@ -7,8 +7,6 @@ use App\Http\Resources\BasicResource;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Poll;
-use Illuminate\Support\Facades\Validator;
-use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 /**
  * Class PollController
@@ -34,12 +32,8 @@ class PollController extends Controller
     {
         $requestData = $request->all();
         /********************validation***********************/
-        $validator = Validator::make($requestData, Poll::$rules);
-        if ($validator->fails()) {
-            return response([
-                'message' => $validator->errors(),
-            ], 400);
-        }
+        $this->validate($request, Poll::$rules);
+
         /***********************store************************/
         $newPoll = Poll::create($requestData);
 
@@ -62,7 +56,8 @@ class PollController extends Controller
             ])
             ->with([
                 'questions' => function ($q) {
-                    $q->where('questions.category_id', '=', 0)->orWhere('questions.category_id', '=', null)->with('options');
+                    $q->where('questions.category_id', '=', 0)->orWhere('questions.category_id', '=',
+                        null)->with('options');
                 }
             ])
             ->first();

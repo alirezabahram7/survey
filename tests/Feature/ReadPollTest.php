@@ -3,11 +3,12 @@
 namespace Tests\Feature;
 
 use PHPUnit\Framework\MockObject\MockObject;
+use Tests\PollTestCase;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class ReadPollTest extends TestCase
+class ReadPollTest extends PollTestCase
 {
     protected $poll,$apiKey;
 
