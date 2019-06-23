@@ -2,6 +2,7 @@
 
 /** @var \Illuminate\Database\Eloquent\Factory $factory */
 
+use App\Category;
 use App\Poll;
 use App\User;
 use Illuminate\Support\Str;
@@ -30,13 +31,21 @@ $factory->define(User::class, function (Faker $faker) {
 
 $factory->define(Poll::class, function (Faker $faker) {
     return [
-        'app_id' => $faker->numberBetween(1,2),
+        'app_id' => $faker->numberBetween(1, 2),
         'title' => $faker->sentence,
         'description' => $faker->paragraph,
         'first_text' => $faker->sentence,
-        'final_text'=>$faker->sentence,
+        'final_text' => $faker->sentence,
         'start_date' => $faker->date(),
         'end_date' => $faker->date()
 
+    ];
+});
+
+$factory->define(Category::class, function (Faker $faker) {
+    return [
+        'poll_id' => $faker->numberBetween(1, 33),
+        'title' => $faker->sentence,
+        'description' => $faker->paragraph,
     ];
 });

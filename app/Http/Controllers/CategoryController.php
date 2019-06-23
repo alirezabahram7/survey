@@ -18,7 +18,7 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = Category::all();
-        return response(new BasicCollectionResource($categories));
+        return response(new BasicCollectionResource($categories),200);
     }
 
     /**
@@ -30,7 +30,7 @@ class CategoryController extends Controller
         if (!$category) {
             throw new ModelNotFoundException('Entry doesnt found');
         }
-        return response(new BasicResource($category));
+        return response(new BasicResource($category),200);
     }
 
     /**
@@ -78,7 +78,7 @@ class CategoryController extends Controller
 
         $category->update($requestData);
 
-        return response('Category Updated', 201);
+        return response('Category Updated', 200);
     }
 
     /**

@@ -9,7 +9,7 @@
 namespace Tests;
 
 
-class PollTestCase extends TestCase
+class CategoryTestCase extends TestCase
 {
     /**
      * @return \Illuminate\Foundation\Testing\TestResponse
@@ -21,13 +21,13 @@ class PollTestCase extends TestCase
      * @param array $overrides
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
-    protected function publishPoll($hasHeader = false, $overrides = [])
+    protected function publishCategory($hasHeader = false, $overrides = [])
     {
-        $poll = $this->_addPoll($overrides, 'make');
+        $category = $this->_addCategory($overrides, 'make');
 
         $this->addHeader($hasHeader);
 
-        $response = $this->post('/api/poll', $poll->toArray());
+        $response = $this->post('/api/category', $category->toArray());
 
         return $response;
     }
@@ -38,13 +38,13 @@ class PollTestCase extends TestCase
      * @param array $overrides
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
-    protected function editPoll($id, $hasHeader = false, $overrides = [])
+    protected function editCategory($id, $hasHeader = false, $overrides = [])
     {
-        $poll = $this->_addPoll($overrides, 'make');
+        $category = $this->_addCategory($overrides, 'make');
 
         $this->addHeader($hasHeader);
 
-        $response = $this->patch('/api/poll/' . $id, $poll->toArray());
+        $response = $this->patch('/api/category/' . $id, $category->toArray());
         return $response;
     }
 
@@ -53,14 +53,14 @@ class PollTestCase extends TestCase
      * @param array $overrides
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
-    protected function deletePoll($hasHeader = false, $overrides = [])
+    protected function deleteCategory($hasHeader = false, $overrides = [])
     {
-        $poll = $this->_addPoll($overrides, 'create');
+        $category = $this->_addCategory($overrides, 'create');
 
 
         $this->addHeader($hasHeader);
 
-        $response = $this->delete('/api/poll/' . $poll->id);
+        $response = $this->delete('/api/category/' . $category->id);
         return $response;
     }
 
@@ -69,15 +69,14 @@ class PollTestCase extends TestCase
      * @param string $addingType
      * @return mixed
      */
-    private function _addPoll($overrides, $addingType = 'make')
+    private function _addCategory($overrides, $addingType = 'make')
     {
         if ($addingType == 'create') {
-            $poll = create('App\Poll', $overrides);
-            return $poll;
+            $category = create('App\Category', $overrides);
+            return $category;
         }
-        $poll = make('App\Poll', $overrides);
-        return $poll;
+        $category = make('App\Category', $overrides);
+        return $category;
 
     }
-
 }
