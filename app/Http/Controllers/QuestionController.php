@@ -22,7 +22,7 @@ class QuestionController extends Controller
         $questions = Question::with('poll')
             ->with('options')->get();
 
-        return response(new BasicCollectionResource($questions), 201);
+        return response(new BasicCollectionResource($questions), 200);
     }
 
     /**
@@ -30,17 +30,13 @@ class QuestionController extends Controller
      *
      * @param  \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
     {
         $requestData = $request->all();
         /********************validation***********************/
-        $validator = Validator::make($requestData, Question::$rules);
-        if ($validator->fails()) {
-            return response([
-                'message' => $validator->errors(),
-            ], 400);
-        }
+        $this->validate($request, Question::$rules);
 
         /*******************************************************/
         $newQuestion = Question::create($requestData);
@@ -99,7 +95,7 @@ class QuestionController extends Controller
             $question->options()->createMany($requestData['options']);
         }
 
-        return response('Question Updated', 201);
+        return response('Question Updated', 200);
     }
 
     /**
@@ -118,10 +114,5 @@ class QuestionController extends Controller
         $question->delete();
 
         return response('deleted', 204);
-    }
-
-    public function setPositions($pollId) {
-        $questions = Question::where('poll_id',$pollId)->with('options')->get();
-
     }
 }
