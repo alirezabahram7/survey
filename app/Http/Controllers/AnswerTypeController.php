@@ -13,6 +13,6 @@ class AnswerTypeController extends Controller
     public function index()
     {
         $answerTypes = AnswerType::all();
-        return response(new BasicCollectionResource($answerTypes));
+        return response(new BasicCollectionResource($answerTypes),200);
     }
 }

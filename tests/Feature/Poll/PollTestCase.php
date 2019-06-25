@@ -22,20 +22,5 @@ class PollTestCase extends GeneralTestCase
         $this->class = 'App\Poll';
         $this->url = '/api/poll/';
     }
-    /**
-     * @param $id
-     * @param bool $hasHeader
-     * @param array $overrides
-     * @return \Illuminate\Foundation\Testing\TestResponse
-     */
-    protected function editPoll($id, $hasHeader = false, $overrides = [])
-    {
-        $poll = $this->addModel('App\Poll', $overrides, 'make');
-
-        $this->addHeader($hasHeader);
-
-        $response = $this->patch('/api/poll/' . $id, $poll->toArray());
-        return $response;
-    }
 
 }

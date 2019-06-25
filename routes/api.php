@@ -28,7 +28,7 @@ Route::middleware('auth.fitamin')->group(function () {
         'category' => 'CategoryController',
         'question' => 'QuestionController',
         'option' => 'OptionController',
-        '/{poll?}/answer' => 'AnswerController'
+       '/{poll}/answer' => 'AnswerController'
     ]);
 
     Route::get('/answer-type', 'AnswerTypeController@index');

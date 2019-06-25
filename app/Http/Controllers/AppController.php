@@ -15,7 +15,7 @@ class AppController extends Controller
     public function index()
     {
         $apps = App::all();
-        return response(new BasicCollectionResource($apps), 201);
+        return response(new BasicCollectionResource($apps), 200);
     }
 
 
@@ -28,6 +28,6 @@ class AppController extends Controller
         if (!$app) {
             throw new ModelNotFoundException('Entry doesnt Found');
         }
-        return response(new BasicResource($app), 201);
+        return response(new BasicResource($app), 200);
     }
 }

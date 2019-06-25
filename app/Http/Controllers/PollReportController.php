@@ -21,7 +21,7 @@ class PollReportController extends Controller
             throw new ModelNotFoundException();
         }
         $votersCount = $poll->answers->count('user_id');
-        return response($votersCount);
+        return response($votersCount,200);
     }
 
     /**
@@ -39,7 +39,7 @@ class PollReportController extends Controller
             'question_id' => $question->id,
             'question_voters_count' => $votersCount
         ];
-        return response($result);
+        return response($result,200);
     }
 
     /**
@@ -62,7 +62,7 @@ class PollReportController extends Controller
             'option_percentage' => ($votersCount == 0 ? 0 : (($optionCount / $votersCount) * 100))
         ];
 
-        return response(new BasicResource($result, $sign), 201);
+        return response(new BasicResource($result, $sign), 200);
     }
 
     /**
@@ -99,7 +99,7 @@ class PollReportController extends Controller
                 'options' => $optionPercentage
             ]
         ];
-        return response(new BasicResource($result), 201);
+        return response(new BasicResource($result), 200);
     }
 
 }
