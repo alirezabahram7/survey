@@ -37,7 +37,7 @@ class AnswerController extends Controller
         foreach ($requestData as $i => $answer) {
             $question = Question::findOrFail($answer['question_id']);
             $answerItems = array(
-                'user_id' => 1,//auth()->user()->id,
+                'user_id' => $request->user_id,
                 'app_id' => $poll->app_id,
                 'question_id' => $question->id,
                 'option_id' => null,
