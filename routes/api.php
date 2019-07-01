@@ -28,10 +28,13 @@ Route::middleware('auth.fitamin')->group(function () {
         'category' => 'CategoryController',
         'question' => 'QuestionController',
         'option' => 'OptionController',
-       '/{poll}/answer' => 'AnswerController'
+       '/poll/{poll}/answer' => 'AnswerController'
     ]);
 
     Route::get('/answer-type', 'AnswerTypeController@index');
+
+    //Answers Post
+    Route::post('poll/{poll}/answer','AnswerController@store');
 
     //Report
     Route::get('/voters-count/{poll}', 'PollReportController@pollVotersCount');

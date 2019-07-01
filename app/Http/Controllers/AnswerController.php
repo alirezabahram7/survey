@@ -7,6 +7,7 @@ use App\Http\Resources\BasicCollectionResource;
 use App\Http\Resources\BasicResource;
 use App\Poll;
 use App\Question;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class AnswerController extends Controller
@@ -32,7 +33,7 @@ class AnswerController extends Controller
      */
     public function store(Request $request, Poll $poll)
     {
-        $requestData = $request->all();
+        $requestData = $request->answers;
 
         foreach ($requestData as $i => $answer) {
             $question = Question::findOrFail($answer['question_id']);
@@ -47,10 +48,12 @@ class AnswerController extends Controller
             if ($question->answer_type_id >= 2) {
                 foreach ($answer['answer'] as $optionId) {
                     $answerItems['option_id'] = ((int)$optionId == 0) ? null : $optionId;
+
                     Answer::create($answerItems);
                 }
             } else {
                 $answerItems['answer'] = $answer['answer'][0];
+
                 Answer::create($answerItems);
             }
         }
