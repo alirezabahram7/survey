@@ -9,7 +9,9 @@
 namespace App\Filters;
 
 
-class Filters
+use Illuminate\Http\Request;
+
+class Filter
 {
     protected $request, $builder;
     protected $filters = [];
@@ -31,14 +33,6 @@ class Filters
     public function apply($builder)
     {
         $this->builder = $builder;
-
-        /*$this->getFilters()
-            ->filter(function ($filter){
-                return method_exists($this,$filter);
-            })
-            ->each(function ($filter,$value){
-                $this->$filter($value);
-            });*/
         foreach ($this->getFilters() as $filter => $value) {
             if (method_exists($this, $filter)) {
                 $this->$filter($value);

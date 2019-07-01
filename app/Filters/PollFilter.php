@@ -9,19 +9,18 @@
 namespace App\Filters;
 
 
-class PollFilters extends Filters
+class PollFilter extends Filter
 {
     protected $filters = ['app_id'];
 
     /**
      * Filter Query By a given username
      *
-     * @param string $username
+     * @param $appId
      * @return mixed
      */
-    public function by($username)
+    public function app_id($appId)
     {
-        $user = Author::where('name', $username)->firstOrFail();
-        return $this->builder->where('author_id', $user->id);
+        return $this->builder->where('app_id', $appId);
     }
 }

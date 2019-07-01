@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Filters\PollFilter;
 use App\Http\Resources\BasicCollectionResource;
 use App\Http\Resources\BasicResource;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -16,17 +17,19 @@ class PollController extends Controller
 {
 
     /**
+     * @param PollFilter $filters
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function index()
+    public function index(PollFilter $filters)
     {
-        $polls = Poll::all();
+        $polls = Poll::filter($filters)->get();
         return response(new BasicCollectionResource($polls), 200);
     }
 
     /**
      * @param Request $request
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request)
     {
