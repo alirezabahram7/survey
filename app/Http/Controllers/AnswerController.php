@@ -9,6 +9,7 @@ use App\Poll;
 use App\Question;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class AnswerController extends Controller
 {
@@ -33,8 +34,7 @@ class AnswerController extends Controller
      */
     public function store(Request $request, Poll $poll)
     {
-        $requestData = $request->all();
-        dd($requestData);
+        $requestData = $request->answers;
 
         foreach ($requestData as $i => $answer) {
             $question = Question::findOrFail($answer['question_id']);

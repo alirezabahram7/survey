@@ -18,6 +18,6 @@ class AnswerTestCase extends GeneralTestCase
     {
         parent::setUp();
         $this->class = 'App\Answer';
-        $this->url = '/api/'.$this->pollId.'/poll/';
+        $this->url = '/api/poll/'.$this->pollId.'/answer';
     }
 }
