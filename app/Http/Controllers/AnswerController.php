@@ -33,7 +33,8 @@ class AnswerController extends Controller
      */
     public function store(Request $request, Poll $poll)
     {
-        $requestData = $request->answers;
+        $requestData = $request->all();
+        dd($requestData);
 
         foreach ($requestData as $i => $answer) {
             $question = Question::findOrFail($answer['question_id']);
