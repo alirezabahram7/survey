@@ -8,6 +8,8 @@ use App\Http\Resources\BasicResource;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Poll;
+use Illuminate\Validation\UnauthorizedException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 /**
  * Class PollController
@@ -15,6 +17,10 @@ use App\Poll;
  */
 class PollController extends Controller
 {
+    public function __construct()
+    {
+        //  $this->middleware('auth:api')->except(['index','show']);
+    }
 
     /**
      * @param PollFilter $filters
@@ -103,6 +109,9 @@ class PollController extends Controller
     {
         if (!$poll) {
             throw new ModelNotFoundException();
+        }
+        if ($poll->is_deletable == 0) {
+            throw new UnauthorizedHttpException('','it s not deletable');
         }
         $poll->delete();
 
