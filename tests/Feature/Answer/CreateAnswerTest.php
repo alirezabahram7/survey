@@ -9,8 +9,13 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class CreateAnswerTest extends AnswerTestCase
 {
     protected $method = 'post';
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->pollId = 4;
+    }
 
-    public function test_a_guest_may_not_add_a_poll()
+    public function test_a_guest_may_not_add_a_answer()
     {
         $response = $this->runRoute($this->method,'create',false);
         $response->assertStatus(401);

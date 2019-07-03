@@ -21,7 +21,7 @@ class AnswerController extends Controller
      */
     public function index(Poll $poll)
     {
-        $answers =$poll->answers;
+        $answers = $poll->answers;
         return response(new BasicCollectionResource($answers), 201);
     }
 
@@ -53,9 +53,10 @@ class AnswerController extends Controller
                     Answer::create($answerItems);
                 }
             } else {
-                $answerItems['answer'] = $answer['answer'][0];
-
-                Answer::create($answerItems);
+                if (!empty($answer['answer'])) {
+                    $answerItems['answer'] = $answer['answer'][0];
+                    Answer::create($answerItems);
+                }
             }
         }
 
@@ -89,7 +90,7 @@ class AnswerController extends Controller
      * @param Answer $answer
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function update(Request $request, Poll $poll,Answer $answer)
+    public function update(Request $request, Poll $poll, Answer $answer)
     {
         $requestData = $request->all();
         $question = Question::findOrFail($requestData['question_id']);

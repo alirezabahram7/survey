@@ -60,7 +60,7 @@ $factory->define(Question::class, function (Faker $faker) {
         'poll_id' => $faker->numberBetween(3, 33),
         'text' => $faker->sentence,
         'description' => $faker->paragraph,
-        'answer_type_id' => $faker->numberBetween(1,3),
+        'answer_type_id' => $faker->numberBetween(1, 3),
         'dependant_option_id' => 2,
         'parent_id' => 0
     ];
@@ -71,5 +71,15 @@ $factory->define(Option::class, function (Faker $faker) {
         'question_id' => $faker->numberBetween(3, 20),
         'text' => $faker->sentence,
         'description' => $faker->paragraph
+    ];
+});
+
+$factory->define(\App\Answer::class, function (Faker $faker) {
+    return [
+        'user_id' =>1,
+        'app_id'=>2,
+        'question_id' => $faker->numberBetween(3, 20),
+        'answer'=>$faker->sentence,
+        'option_id'=> $faker->numberBetween(3, 20)
     ];
 });

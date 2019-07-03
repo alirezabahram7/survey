@@ -61,7 +61,7 @@ class GeneralTestCase extends TestCase
         $this->model = $this->addModel($overrides, $addingType);
 
         $this->addHeader($hasHeader);
-
+       // dd($this->url);
         $response = $this->sendRequest($method);
 
         return $response;
