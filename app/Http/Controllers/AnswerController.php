@@ -52,7 +52,8 @@ class AnswerController extends Controller
 
                     Answer::create($answerItems);
                 }
-            } else {
+            }
+            if ($question->answer_type_id == 1 or $question->answer_type_id == 4) {
                 if (!empty($answer['answer'])) {
                     $answerItems['answer'] = $answer['answer'][0];
                     Answer::create($answerItems);
