@@ -34,6 +34,7 @@ class AnswerController extends Controller
      */
     public function store(Request $request, Poll $poll)
     {
+
         $requestData = $request->answers;
 
         foreach ($requestData as $i => $answer) {
@@ -53,9 +54,15 @@ class AnswerController extends Controller
                     Answer::create($answerItems);
                 }
             }
-            if ($question->answer_type_id == 1 or $question->answer_type_id == 4) {
+            elseif ($question->answer_type_id == 1) {
                 if (!empty($answer['answer'])) {
                     $answerItems['answer'] = $answer['answer'][0];
+                    Answer::create($answerItems);
+                }
+            }
+            if ($question->answer_type_id == 4) {
+                if (!empty($answer['adjective'])) {
+                    $answerItems['answer'] = $answer['adjective'];
                     Answer::create($answerItems);
                 }
             }
