@@ -23,6 +23,11 @@ class Poll extends Model
         'app_id' => 'required'
     );
 
+    protected $attributes = [
+        'is_active' => 1,
+        'is_deletable' => 1
+    ];
+
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
