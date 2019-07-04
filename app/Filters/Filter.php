@@ -38,7 +38,6 @@ class Filter
                 $this->$filter($value);
             }
         }
-
         return $builder;
     }
 
@@ -50,5 +49,17 @@ class Filter
         //return collect($this->request->only($this->filters))->flip();
         return $this->request->only($this->filters);
 
+    }
+
+    /**
+     * @param $mode
+     * @return mixed
+     */
+    public function show_actives($mode = 1)
+    {
+        if ($mode == '*') {
+            return $this->builder;
+        }
+        return $this->builder->where('is_active', $mode);
     }
 }

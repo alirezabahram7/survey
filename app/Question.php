@@ -51,4 +51,15 @@ class Question extends Model
     public function answers(){
         return $this->hasMany('App\Answer');
     }
+
+    /**
+     * @param $query
+     * @param $filters
+     * @return mixed
+     */
+    public function scopeFilter($query, $filters)
+    {
+        return $filters->apply($query);
+
+    }
 }

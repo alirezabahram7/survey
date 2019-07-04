@@ -19,7 +19,7 @@ class PollController extends Controller
 {
     public function __construct()
     {
-        //  $this->middleware('auth:api')->except(['index','show']);
+        $this->middleware('auth:api')->except(['index','show']);
     }
 
     /**
@@ -39,6 +39,7 @@ class PollController extends Controller
      */
     public function store(Request $request)
     {
+        //dd($request->server->all()['PHP_AUTH_USER']);
         $requestData = $request->all();
         /********************validation***********************/
         $this->validate($request, Poll::$rules);

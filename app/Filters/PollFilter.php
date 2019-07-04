@@ -11,7 +11,7 @@ namespace App\Filters;
 
 class PollFilter extends Filter
 {
-    protected $filters = ['app_id'];
+    protected $filters = ['app_id', 'show_actives'];
 
     /**
      * Filter Query By a given username
@@ -23,4 +23,5 @@ class PollFilter extends Filter
     {
         return $this->builder->where('app_id', $appId);
     }
+
 }

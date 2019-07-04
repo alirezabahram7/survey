@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Filters\QuestionFilter;
 use App\Http\Resources\BasicCollectionResource;
 use App\Http\Resources\BasicResource;
 use Illuminate\Http\Request;
@@ -15,11 +16,12 @@ class QuestionController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param QuestionFilter $filters
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(QuestionFilter $filters)
     {
-        $questions = Question::with('poll')
+        $questions = Question::filter($filters)->with('poll')
             ->with('options')->get();
 
         return response(new BasicCollectionResource($questions), 200);
