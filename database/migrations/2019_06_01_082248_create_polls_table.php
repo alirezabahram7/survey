@@ -24,6 +24,7 @@ class CreatePollsTable extends Migration
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->boolean('is_active')->default(1);
+            $table->boolean('is_deletable')->default(1);
             $table->timestamps();
         });
 
