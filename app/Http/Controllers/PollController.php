@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Filters\PollFilter;
 use App\Http\Resources\BasicCollectionResource;
 use App\Http\Resources\BasicResource;
+use App\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Poll;
@@ -17,10 +18,10 @@ use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
  */
 class PollController extends Controller
 {
-    public function __construct()
+    /*public function __construct()
     {
         $this->middleware('auth:api')->except(['index','show']);
-    }
+    }*/
 
     /**
      * @param PollFilter $filters
@@ -39,12 +40,19 @@ class PollController extends Controller
      */
     public function store(Request $request)
     {
+	    $apiKey = $request->header( 'x-api-key' );
+
+	    $user = User::whereApiKey( $apiKey )->first();
+
+
         //dd($request->server->all()['PHP_AUTH_USER']);
         $requestData = $request->all();
         /********************validation***********************/
         $this->validate($request, Poll::$rules);
 
         /***********************store************************/
+        $requestData['app_id'] = $user->app_id ;
+        //dd($requestData);
         $newPoll = Poll::create($requestData);
 
         return response(new BasicResource($newPoll), 201);
@@ -117,5 +125,8 @@ class PollController extends Controller
         $poll->delete();
 
         return response('deleted', 204);
+    }
+    public function test(){
+    	return response('data gone through');
     }
 }
