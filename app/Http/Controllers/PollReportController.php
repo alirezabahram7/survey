@@ -20,8 +20,8 @@ class PollReportController extends Controller
         if (!$poll) {
             throw new ModelNotFoundException();
         }
-        $votersCount = $poll->answers->count('user_id');
-        return response($votersCount,200);
+        $votersCount = $poll->answers()->distinct(['user_id', 'app_id'])->count(['user_id', 'app_id']);
+        return response($votersCount, 200);
     }
 
     /**
@@ -33,13 +33,13 @@ class PollReportController extends Controller
         if (!$question) {
             throw new ModelNotFoundException();
         }
-        $votersCount = $question->answers->count('user_id');
+        $votersCount = $question->answers()->distinct(['user_id', 'app_id'])->count(['user_id', 'app_id']);
 
         $result = [
             'question_id' => $question->id,
             'question_voters_count' => $votersCount
         ];
-        return response($result,200);
+        return response($result, 200);
     }
 
     /**
@@ -52,7 +52,11 @@ class PollReportController extends Controller
         if (!$option) {
             throw new ModelNotFoundException();
         }
-        $optionCount = $option->answers->count('option_id');
+        $optionCount = $option->answers()->distinct(['user_id', 'app_id', 'option_id'])->count([
+            'user_id',
+            'app_id',
+            'option_id'
+        ]);
         $poll = $option->question->poll;
         $votersCount = $this->pollVotersCount($poll)->content();
 
@@ -71,19 +75,6 @@ class PollReportController extends Controller
      */
     public function pollReport(Poll $poll)
     {
-
-        /*$poll = Poll::where('id',$poll2)->with([
-            'questions' => function ($q) {
-                $q->with(['options'=> function ($q)
-                {
-                    $q->withCount('answers');
-                }])->withCount('answers');
-    }
-        ])->withCount('answers')->get();
-
-
-        return response($poll, 201);*/
-
         $pollVotersCount = $this->pollVotersCount($poll);
         foreach ($poll->questions as $question) {
             $questionVoters[$question->id] = $this->questionVotersCount($question)->original;
