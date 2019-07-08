@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\AnswerCollectionResource;
 use App\Http\Resources\BasicCollectionResource;
 use App\Http\Resources\BasicResource;
 use App\Question;
@@ -35,9 +36,16 @@ class PollReportController extends Controller
         }
         $votersCount = $question->answers()->distinct(['user_id', 'app_id'])->count(['user_id', 'app_id']);
 
+        $optionPercentage=array();
+        foreach ($question->options as $option) {
+            $optionPercentage [$option->id] = $this->optionsPercentage($option)->original;
+        }
+
         $result = [
             'question_id' => $question->id,
-            'question_voters_count' => $votersCount
+            'question_text' => $question->text,
+            'question_voters_count' => $votersCount,
+            'options' => $optionPercentage
         ];
         return response($result, 200);
     }
@@ -61,12 +69,14 @@ class PollReportController extends Controller
         $votersCount = $this->pollVotersCount($poll)->content();
 
         $result = [
+            'question_id' => $option->question_id,
             'option_id' => $option->id,
+            'option_text' => $option->text,
             'options_count' => $optionCount,
             'option_percentage' => ($votersCount == 0 ? 0 : (($optionCount / $votersCount) * 100))
         ];
 
-        return response(new BasicResource($result, $sign), 200);
+        return response($result, 200);
     }
 
     /**
@@ -78,19 +88,32 @@ class PollReportController extends Controller
         $pollVotersCount = $this->pollVotersCount($poll);
         foreach ($poll->questions as $question) {
             $questionVoters[$question->id] = $this->questionVotersCount($question)->original;
-            foreach ($question->options as $option) {
-                $optionPercentage [$option->id] = $this->optionsPercentage($option)->original;
-            }
         }
 
         $result = [
+            'poll_title' => $poll->title,
             'voters_count' => $pollVotersCount->original,
             'questions' => [
                 'question_voters_count' => $questionVoters,
-                'options' => $optionPercentage
             ]
         ];
         return response(new BasicResource($result), 200);
     }
 
+    public function userReport(Poll $poll,$userId,$appId=null) {
+        if($appId==null){
+            $appId=$poll->app_id;
+        }
+
+        $result = [
+            'poll_id' => $poll->id,
+            'poll_title' => $poll->title,
+            'user_id' => $userId,
+            'app_id' => $appId,
+            'questions'=> new AnswerCollectionResource($poll->answers->where('user_id',$userId)->where('app_id',$appId)) ,
+            'answers' => $poll->answers->where('user_id',$userId)->where('app_id',$appId)
+        ];
+
+        return response(new BasicResource($result), 200);
+    }
 }

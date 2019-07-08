@@ -43,4 +43,6 @@ Route::middleware('basic.token')->group(function () {
     Route::get('/voters-count/{poll}', 'PollReportController@pollVotersCount');
     Route::get('/option-percentage/{option}', 'PollReportController@optionsPercentage');
     Route::get('/report/{poll}', 'PollReportController@pollReport');
+    Route::get('/report/{poll}/{userId}/{appId?}', 'PollReportController@userReport');
+
 });

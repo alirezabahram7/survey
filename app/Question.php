@@ -23,6 +23,10 @@ class Question extends Model
     {
         return $this->hasMany('App\Option', 'question_id');
     }
+   public function optionsText()
+    {
+        return $this->hasMany('App\Option', 'question_id')->select('text');
+    }
 
     public function answerType()
     {

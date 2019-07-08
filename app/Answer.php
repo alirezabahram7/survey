@@ -19,6 +19,11 @@ class Answer extends Model
         return $this->belongsTo('App\Option', 'option_id');
     }
 
+    public function optionText()
+    {
+        return $this->belongsTo('App\Option', 'option_id')->select('text');
+    }
+
     public function voter()
     {
         return $this->belongsTo('App\Option', 'voter_id');
