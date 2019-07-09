@@ -93,9 +93,7 @@ class PollReportController extends Controller
         $result = [
             'poll_title' => $poll->title,
             'voters_count' => $pollVotersCount->original,
-            'questions' => [
-                'question_voters_count' => $questionVoters,
-            ]
+            'questions' => $questionVoters
         ];
         return response(new BasicResource($result), 200);
     }
