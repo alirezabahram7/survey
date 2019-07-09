@@ -60,12 +60,22 @@ class QuestionController extends Controller
      * Display the specified resource.
      *
      * @param  int $id
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id, Request $request)
     {
-        $question = Question::where('id', $id)
-            ->with('options')
+        $question = Question::where('id', $id);
+        $is_active_statuses = [0, 1];
+
+        if ($request->actives) {
+            $is_active_statuses = [1];
+        }
+        $question = $question->with([
+            'options' => function ($q) use ($is_active_statuses) {
+                $q->whereIn('is_active', $is_active_statuses);
+            }
+        ])
             ->first();
 
         if (!$question) {

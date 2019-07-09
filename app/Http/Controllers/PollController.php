@@ -40,9 +40,9 @@ class PollController extends Controller
      */
     public function store(Request $request)
     {
-	    $apiKey = $request->header( 'x-api-key' );
+        $apiKey = $request->header('x-api-key');
 
-	    $user = User::whereApiKey( $apiKey )->first();
+        $user = User::whereApiKey($apiKey)->first();
 
 
         //dd($request->server->all()['PHP_AUTH_USER']);
@@ -51,7 +51,7 @@ class PollController extends Controller
         $this->validate($request, Poll::$rules);
 
         /***********************store************************/
-        $requestData['app_id'] = $user->app_id ;
+        $requestData['app_id'] = $user->app_id;
         //dd($requestData);
         $newPoll = Poll::create($requestData);
 
@@ -60,22 +60,37 @@ class PollController extends Controller
 
     /**
      * @param $id
+     * @param Request $request
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id, Request $request)
     {
+        $is_active_statuses = [0, 1];
+
+        if ($request->actives) {
+            $is_active_statuses = [1];
+        }
+
         $poll = Poll::where('id', $id)
             ->with('parent')
             ->with('children')
             ->with([
-                'categories.questions' => function ($q) {
-                    $q->with('options');
+                'categories.questions' => function ($q) use ($is_active_statuses) {
+                    $q->whereIn('is_active', $is_active_statuses)->with([
+                        'options' => function ($q) use ($is_active_statuses) {
+                            $q->whereIn('is_active', $is_active_statuses);
+                        }
+                    ]);
                 }
             ])
             ->with([
-                'questions' => function ($q) {
+                'questions' => function ($q) use ($is_active_statuses) {
                     $q->where('questions.category_id', '=', 0)->orWhere('questions.category_id', '=',
-                        null)->with('options');
+                        null)->whereIn('is_active', $is_active_statuses)->with([
+                        'options' => function ($q) use ($is_active_statuses) {
+                            $q->where('is_active', $is_active_statuses);
+                        }
+                    ]);
                 }
             ])
             ->first();
@@ -120,13 +135,15 @@ class PollController extends Controller
             throw new ModelNotFoundException();
         }
         if ($poll->is_deletable == 0) {
-            throw new UnauthorizedHttpException('','it s not deletable');
+            throw new UnauthorizedHttpException('', 'it s not deletable');
         }
         $poll->delete();
 
         return response('deleted', 204);
     }
-    public function test(){
-    	return response('data gone through');
+
+    public function test()
+    {
+        return response('data gone through');
     }
 }
