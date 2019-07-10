@@ -12,7 +12,7 @@ class AnswerTestCase extends GeneralTestCase
     /**
      * @return \Illuminate\Foundation\Testing\TestResponse
      */
-    protected $pollId;
+    protected $pollId = 44;
 
     protected function setUp(): void
     {

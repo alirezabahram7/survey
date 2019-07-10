@@ -16,7 +16,7 @@ class GeneralTestCase extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->apiKey = md5('fitamin-survey');
+        $this->apiKey = "81ecff074e9714a888c3d727f20fc1b2341226e0";
     }
 
     /**
@@ -61,7 +61,7 @@ class GeneralTestCase extends TestCase
         $this->model = $this->addModel($overrides, $addingType);
 
         $this->addHeader($hasHeader);
-       // dd($this->url);
+        //dd($this->url);
         $response = $this->sendRequest($method);
 
         return $response;
@@ -77,7 +77,7 @@ class GeneralTestCase extends TestCase
         if($this->hasIdInUrl){
             $this->url=$this->url.$this->model->id;
         }
-
+        //dd($this->model->toArray());
         $response = $this->$method($this->url, $this->model->toArray());
         return $response;
     }
