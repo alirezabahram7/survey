@@ -88,7 +88,7 @@ class PollController extends Controller
                     $q->where('questions.category_id', '=', 0)->orWhere('questions.category_id', '=',
                         null)->whereIn('is_active', $is_active_statuses)->with([
                         'options' => function ($q) use ($is_active_statuses) {
-                            $q->where('is_active', $is_active_statuses);
+                            $q->whereIn('is_active', $is_active_statuses);
                         }
                     ]);
                 }
