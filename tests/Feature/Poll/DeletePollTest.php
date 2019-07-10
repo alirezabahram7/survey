@@ -24,6 +24,7 @@ class DeletePollTest extends PollTestCase
     {
         $this->runRoute($this->method, 'create')
             ->assertStatus(204);
+        $this->assertDatabaseMissing('polls', ['id' => $this->model->id]);
     }
 
     public function test_a_poll_cant_be_deleted_if_it_doesnt_exists()
