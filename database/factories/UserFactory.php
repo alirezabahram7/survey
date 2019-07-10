@@ -35,7 +35,7 @@ $factory->define(Poll::class, function (Faker $faker) {
     return [
         'app_id' => $faker->numberBetween(1, 2),
         'title' => $faker->sentence,
-        'description' => $faker->paragraph,
+        'description' => $faker->sentence,
         'first_text' => $faker->sentence,
         'final_text' => $faker->sentence,
         'start_date' => $faker->date(),
@@ -45,41 +45,51 @@ $factory->define(Poll::class, function (Faker $faker) {
 });
 
 $factory->define(Category::class, function (Faker $faker) {
+
     return [
-        'poll_id' => $faker->numberBetween(1, 33),
+        'poll_id' => function(){
+            return factory('App\Poll')->create()->id;
+        },
         'title' => $faker->sentence,
-        'description' => $faker->paragraph,
-        'dependant_question_id' => 1,
-        'dependant_option_id' => 2,
+        'description' => $faker->sentence,
+        'dependant_question_id' => 0,
+        'dependant_option_id' => 0,
         'parent_id' => 0
     ];
 });
 
 $factory->define(Question::class, function (Faker $faker) {
+
     return [
-        'poll_id' => $faker->numberBetween(3, 33),
+        'poll_id' => function () {
+            return factory('App\Poll')->create()->id;
+        },
         'text' => $faker->sentence,
-        'description' => $faker->paragraph,
-        'answer_type_id' => $faker->numberBetween(1, 3),
-        'dependant_option_id' => 2,
+        'description' => $faker->sentence,
+        'answer_type_id' => $faker->numberBetween(1, 4),
+        'dependant_option_id' => 0,
         'parent_id' => 0
     ];
 });
 
 $factory->define(Option::class, function (Faker $faker) {
+
     return [
-        'question_id' => $faker->numberBetween(3, 20),
+        'question_id' => function(){
+            return factory('App\Question')->create()->id;
+        },
         'text' => $faker->sentence,
-        'description' => $faker->paragraph
+        'description' => $faker->sentence
     ];
 });
 
 $factory->define(\App\Answer::class, function (Faker $faker) {
+    $questionId = function (){return factory('App\Question')->create()->id;};
+    $optionId = function () use ($questionId){factory('App\Option')->create(['question_id' => $questionId])->id;};
     return [
-        'user_id' =>1,
-        'app_id'=>2,
-        'question_id' => $faker->numberBetween(3, 20),
-        'answer'=>$faker->sentence,
-        'option_id'=> $faker->numberBetween(3, 20)
+        'user_id' => 2,
+        'app_id' => 2,
+        'question_id' => $questionId,
+        'answer' => $optionId,
     ];
 });
