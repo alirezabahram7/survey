@@ -71,10 +71,13 @@ class QuestionController extends Controller
         if ($request->actives) {
             $is_active_statuses = [1];
         }
-        $question = $question->with([
-            'options' => function ($q) use ($is_active_statuses) {
-                $q->whereIn('is_active', $is_active_statuses);
-            }
+
+        $callback = function ($q) use ($is_active_statuses) {
+            $q->whereIn('is_active', $is_active_statuses);
+        };
+
+        $question = $question->whereHas('options',$callback)->with([
+            'options' => $callback
         ])
             ->first();
 

@@ -72,25 +72,29 @@ class PollController extends Controller
             $is_active_statuses = [1];
         }
 
+        $callback = function ($q) use ($is_active_statuses) {
+                       $q->whereIn('is_active', $is_active_statuses);
+                  };
+
         $poll = Poll::where('id', $id)
             ->with('parent')
             ->with('children')
             ->with([
-                'categories.questions' => function ($q) use ($is_active_statuses) {
+                'categories.questions' => function ($q) use ($is_active_statuses,$callback) {
                     $q->whereIn('is_active', $is_active_statuses)->whereHas(
-                        'options',function (Builder $q) use ($is_active_statuses) {
-                            $q->whereIn('is_active', $is_active_statuses);
-                        });
+                        'options', $callback)->with([
+                        'options' => $callback
+                    ]);
                 }
             ])
             ->with([
-                'questions' => function ($q) use ($is_active_statuses) {
+                'questions' => function ($q) use ($is_active_statuses,$callback) {
                     $q->where('questions.category_id', '=', 0)->orWhere('questions.category_id', '=',
                         null)->whereIn('is_active', $is_active_statuses)->whereHas(
-                        'options',function (Builder $q) use ($is_active_statuses) {
-                            $q->whereIn('is_active', $is_active_statuses);
-                        }
-                    );
+                        'options', $callback
+                    )->with([
+                        'options' => $callback
+                    ]);
                 }
             ])
             ->first();
