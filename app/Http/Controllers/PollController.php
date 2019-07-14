@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Poll;
 use Illuminate\Validation\UnauthorizedException;
+use Illuminate\Database\Eloquent\Builder;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 /**
@@ -76,21 +77,20 @@ class PollController extends Controller
             ->with('children')
             ->with([
                 'categories.questions' => function ($q) use ($is_active_statuses) {
-                    $q->whereIn('is_active', $is_active_statuses)->with([
-                        'options' => function ($q) use ($is_active_statuses) {
+                    $q->whereIn('is_active', $is_active_statuses)->whereHas(
+                        'options',function (Builder $q) use ($is_active_statuses) {
                             $q->whereIn('is_active', $is_active_statuses);
-                        }
-                    ]);
+                        });
                 }
             ])
             ->with([
                 'questions' => function ($q) use ($is_active_statuses) {
                     $q->where('questions.category_id', '=', 0)->orWhere('questions.category_id', '=',
-                        null)->whereIn('is_active', $is_active_statuses)->with([
-                        'options' => function ($q) use ($is_active_statuses) {
+                        null)->whereIn('is_active', $is_active_statuses)->whereHas(
+                        'options',function (Builder $q) use ($is_active_statuses) {
                             $q->whereIn('is_active', $is_active_statuses);
                         }
-                    ]);
+                    );
                 }
             ])
             ->first();
