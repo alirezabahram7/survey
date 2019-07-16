@@ -21,11 +21,6 @@ class PollController extends Controller
 {
     protected $request;
 
-   public function __construct(Request $request)
-    {
-//        $this->middleware('auth:api')->except(['index','show']);
-       $this->request=$request;
-    }
 
     /**
      * @param PollFilter $filters
@@ -33,7 +28,6 @@ class PollController extends Controller
      */
     public function index(PollFilter $filters)
     {
-       // dd($this->request->get('app_id'));
         $polls = Poll::filter($filters)->get();
         return response(new BasicCollectionResource($polls), 200);
     }
