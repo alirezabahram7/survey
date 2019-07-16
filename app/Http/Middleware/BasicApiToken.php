@@ -25,7 +25,9 @@ class BasicApiToken {
 		if ( ! $apiKey || ! $op ) {
 			throw  new UnauthorizedHttpException( '', 'access denied' );
 		}
-
+        $request->merge([
+            'app_id' => $op->app_id
+        ]);
 		return $next( $request );
 	}
 }
