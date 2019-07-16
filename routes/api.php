@@ -39,6 +39,10 @@ Route::middleware('basic.token')->group(function () {
     //Answers Post
     Route::post('poll/{poll}/answer','AnswerController@store');
 
+    //drop answers of a given poll
+    Route::delete('poll-answer/{poll}','AnswerController@drop');
+
+
     //Report
     Route::get('/voters-count/{poll}', 'PollReportController@pollVotersCount');
     Route::get('/option-percentage/{option}', 'PollReportController@optionsPercentage');

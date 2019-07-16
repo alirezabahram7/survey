@@ -53,8 +53,7 @@ class AnswerController extends Controller
 
                     Answer::create($answerItems);
                 }
-            }
-            elseif ($question->answer_type_id == 1) {
+            } elseif ($question->answer_type_id == 1) {
                 if (!empty($answer['answer'])) {
                     $answerItems['answer'] = $answer['answer'][0];
                     Answer::create($answerItems);
@@ -122,19 +121,33 @@ class AnswerController extends Controller
         return response('Answer Updated', 201);
     }
 
+//    /**
+//     * Remove the specified resource from storage.
+//     *
+//     * @param  \App\Answer $answer
+//     * @return \Illuminate\Http\Response
+//     * @throws \Exception
+//     */
+//    public function destroy(Answer $answer)
+//    {
+//        if (!$answer) {
+//            throw new ModelNotFoundException("Entry does not Found");
+//        }
+//        $answer->delete();
+//        return response('deleted', 204);
+//    }
+
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Answer $answer
-     * @return \Illuminate\Http\Response
-     * @throws \Exception
+     * @param Poll $poll
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function destroy(Answer $answer)
+    public function drop(Poll $poll)
     {
-        if (!$answer) {
+        if (!$poll) {
             throw new ModelNotFoundException("Entry does not Found");
         }
-        $answer->delete();
+        $poll->answers()->delete();
+
         return response('deleted', 204);
     }
 }
