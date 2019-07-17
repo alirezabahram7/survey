@@ -9,7 +9,6 @@ use App\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use App\Poll;
-use Illuminate\Validation\UnauthorizedException;
 use Illuminate\Database\Eloquent\Builder;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
@@ -40,7 +39,6 @@ class PollController extends Controller
 
         $user = User::whereApiKey($apiKey)->first();
 
-
         //dd($request->server->all()['PHP_AUTH_USER']);
         $requestData = $request->all();
         /********************validation***********************/
@@ -61,6 +59,7 @@ class PollController extends Controller
      */
     public function show($id, Request $request)
     {
+
         $is_active_statuses = [0, 1];
 
         if ($request->actives) {
@@ -98,6 +97,9 @@ class PollController extends Controller
             throw new ModelNotFoundException();
         }
 
+        if($poll->app_id != $request->app_id){
+            throw new UnauthorizedHttpException('','not allowed');
+        }
         return response(new BasicResource($poll), 200);
     }
 
@@ -113,7 +115,9 @@ class PollController extends Controller
         if (!$poll) {
             throw new ModelNotFoundException();
         }
-
+        if($poll->app_id != $request->app_id){
+            throw new UnauthorizedHttpException('','not allowed');
+        }
         $requestData = $request->all();
 
         $poll->update($requestData);
@@ -128,10 +132,13 @@ class PollController extends Controller
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      * @throws \Exception
      */
-    public function destroy(Poll $poll)
+    public function destroy(Request $request,Poll $poll)
     {
         if (!$poll) {
             throw new ModelNotFoundException();
+        }
+        if($poll->app_id != $request->app_id){
+            throw new UnauthorizedHttpException('','not allowed');
         }
         if ($poll->is_deletable == 0) {
             throw new UnauthorizedHttpException('', 'it s not deletable');

@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\Filters\QuestionFilter;
 use App\Http\Resources\BasicCollectionResource;
 use App\Http\Resources\BasicResource;
+use App\Poll;
 use Illuminate\Http\Request;
 use App\Question;
 use Illuminate\Support\Facades\Validator;
 use App\Option;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class QuestionController extends Controller
 {
@@ -36,6 +38,11 @@ class QuestionController extends Controller
      */
     public function store(Request $request)
     {
+        $poll =Poll::findOrFail($request->poll_id);
+
+        if($poll->app_id != $request->app_id){
+            throw new UnauthorizedHttpException('','not allowed');
+        }
         $requestData = $request->all();
         /********************validation***********************/
         $this->validate($request, Question::$rules);
@@ -66,6 +73,7 @@ class QuestionController extends Controller
     public function show($id, Request $request)
     {
         $question = Question::where('id', $id);
+
         $is_active_statuses = [0, 1];
 
         if ($request->actives) {
@@ -85,6 +93,11 @@ class QuestionController extends Controller
             throw new ModelNotFoundException();
         }
 
+        $poll =Poll::findOrFail($question->poll_id);
+
+        if($poll->app_id != $request->app_id){
+            throw new UnauthorizedHttpException('','not allowed');
+        }
         return response(new BasicResource($question), 200);
     }
 
@@ -100,7 +113,11 @@ class QuestionController extends Controller
         if (!$question) {
             throw new ModelNotFoundException();
         }
+        $poll =Poll::findOrFail($question->poll_id);
 
+        if($poll->app_id != $request->app_id){
+            throw new UnauthorizedHttpException('','not allowed');
+        }
         $requestData = $request->all();
         $question->update($requestData);
 
@@ -120,12 +137,16 @@ class QuestionController extends Controller
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      * @throws \Exception
      */
-    public function destroy(Question $question)
+    public function destroy(Request $request,Question $question)
     {
         if (!$question) {
             throw new ModelNotFoundException();
         }
+        $poll =Poll::findOrFail($question->poll_id);
 
+        if($poll->app_id != $request->app_id){
+            throw new UnauthorizedHttpException('','not allowed');
+        }
         $question->delete();
 
         return response('deleted', 204);

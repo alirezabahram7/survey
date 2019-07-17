@@ -9,6 +9,7 @@ use App\Http\Resources\BasicCollectionResource;
 use App;
 use App\Category;
 use App\Poll;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class CategoryController extends Controller
 {
@@ -42,7 +43,9 @@ class CategoryController extends Controller
         $requestData = $request->all();
 
         $poll = Poll::where(['id' => $requestData['poll_id']])->first();
-
+        if($poll->app_id != $request->app_id){
+            throw new UnauthorizedHttpException('','not allowed');
+        }
         if (empty($poll)) {
             throw new ModelNotFoundException('Entry doesnt found');
         }
@@ -73,7 +76,11 @@ class CategoryController extends Controller
         if (!$category) {
             throw new ModelNotFoundException('Entry didnt find');
         }
+        $poll =Poll::findOrFail($category->poll_id);
 
+        if($poll->app_id != $request->app_id){
+            throw new UnauthorizedHttpException('','not allowed');
+        }
         $requestData = $request->all();
 
         $category->update($requestData);
@@ -86,10 +93,15 @@ class CategoryController extends Controller
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      * @throws \Exception
      */
-    public function destroy(Category $category)
+    public function destroy(Request $request,Category $category)
     {
         if (!$category) {
             throw new ModelNotFoundException('Entry doesnt found');
+        }
+        $poll =Poll::findOrFail($category->poll_id);
+
+        if($poll->app_id != $request->app_id){
+            throw new UnauthorizedHttpException('','not allowed');
         }
         $category->delete();
 

@@ -9,10 +9,13 @@ use App\Poll;
 use App\Question;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\UnauthorizedException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class AnswerController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -22,7 +25,7 @@ class AnswerController extends Controller
     public function index(Poll $poll)
     {
         $answers = $poll->answers;
-        return response(new BasicCollectionResource($answers), 201);
+        return response(new BasicCollectionResource($answers), 200);
     }
 
     /**
@@ -34,7 +37,9 @@ class AnswerController extends Controller
      */
     public function store(Request $request, Poll $poll)
     {
-
+        if($poll->app_id != $request->app_id){
+            throw new UnauthorizedHttpException('','not allowed');
+        }
         $requestData = $request->answers;
 
         foreach ($requestData as $i => $answer) {
@@ -99,6 +104,9 @@ class AnswerController extends Controller
      */
     public function update(Request $request, Poll $poll, Answer $answer)
     {
+        if($poll->app_id != $request->app_id){
+            throw new UnauthorizedHttpException('','not allowed');
+        }
         $requestData = $request->all();
         $question = Question::findOrFail($requestData['question_id']);
 
@@ -141,11 +149,16 @@ class AnswerController extends Controller
      * @param Poll $poll
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function drop(Poll $poll)
+    public function drop(Request $request,Poll $poll)
     {
         if (!$poll) {
             throw new ModelNotFoundException("Entry does not Found");
         }
+
+        if($poll->app_id != $request->app_id){
+            throw new UnauthorizedHttpException('','not allowed');
+        }
+
         $poll->answers()->delete();
 
         return response('deleted', 204);
