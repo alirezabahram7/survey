@@ -139,4 +139,19 @@ class PollReportController extends Controller
         $this->dateTo = $request->has('date_to') ? $request->date_to : '3000-01-01';
     }
 
+    /**
+     * @param Poll $poll
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
+    public function fetchAdjectiveAnswers($pollId)
+    {
+        $questions = Poll::where('id', $pollId)->with([
+            'questions' => function ($q) {
+                $q->with('answers')->whereIn('answer_type_id', [1, 4]);
+            }
+        ])->get();
+
+        return response(new BasicCollectionResource($questions), 200);
+    }
+
 }
