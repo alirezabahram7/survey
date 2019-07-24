@@ -66,4 +66,8 @@ class Question extends Model
         return $filters->apply($query);
 
     }
+
+    public function scopeAdjectives($query) {
+        return $query->whereIn('answer_type_id', [AnswerType::ADJECTIVE, AnswerType::MIXED,AnswerType::SCORING]);
+    }
 }

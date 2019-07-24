@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Answer;
+use App\AnswerType;
 use App\Http\Resources\AnswerCollectionResource;
 use App\Http\Resources\BasicCollectionResource;
 use App\Http\Resources\BasicResource;
@@ -54,6 +56,7 @@ class PollReportController extends Controller
 
         $result = [
             'question_id' => $question->id,
+            'answewr_type_id' => $question->answer_type_id,
             'question_text' => $question->text,
             'question_voters_count' => $votersCount,
             'options' => $optionPercentage
@@ -140,18 +143,15 @@ class PollReportController extends Controller
     }
 
     /**
-     * @param Poll $poll
+     * @param $pollId
+     * @param int $perPage
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function fetchAdjectiveAnswers($pollId)
+    public function fetchAdjectiveAnswers($pollId,$perPage = 20)
     {
-        $questions = Poll::where('id', $pollId)->with([
-            'questions' => function ($q) {
-                $q->with('answers')->whereIn('answer_type_id', [1, 4]);
-            }
-        ])->get();
-
-        return response(new BasicCollectionResource($questions), 200);
+        $answers = Answer::whereHas('question',function ($q) use ($pollId){
+            $q->where('poll_id',$pollId)->adjectives();
+        })->paginate($perPage);
+        return response(new BasicCollectionResource($answers), 200);
     }
-
 }
