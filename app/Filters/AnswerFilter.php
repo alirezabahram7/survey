@@ -9,7 +9,7 @@
 namespace App\Filters;
 
 
-class AnswerFilter
+class AnswerFilter extends Filter
 {
-
+    protected $filters = ['betweenDates'];
 }

@@ -62,4 +62,5 @@ class Filter
         }
         return $this->builder->where('is_active', $mode);
     }
+
 }
