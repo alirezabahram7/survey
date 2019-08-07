@@ -147,11 +147,25 @@ class PollReportController extends Controller
      * @param int $perPage
      * @return \App\Http\Resources\BasicCollectionResource
      */
-    public function fetchAdjectiveAnswers($pollId,$perPage = 20)
+    public function fetchPollAdjectiveAnswers($pollId,$perPage = 5)
     {
         $answers = Answer::whereHas('question',function ($q) use ($pollId){
             $q->where('poll_id',$pollId)->adjectives();
-        })->paginate($perPage);;
+        })->with('question')->whereNotNull('answer')->paginate($perPage);;
+
+        return new BasicCollectionResource($answers);
+    }
+
+    /**
+     * @param $questionId
+     * @param int $perPage
+     * @return BasicCollectionResource
+     */
+    public function fetchAdjectiveAnswers($questionId,$perPage = 5)
+    {
+        $answers = Answer::whereHas('question',function ($q) use ($questionId){
+            $q->where('id',$questionId)->adjectives();
+        })->whereNotNull('answer')->paginate($perPage);;
 
         return new BasicCollectionResource($answers);
     }

@@ -8,7 +8,6 @@
 
 namespace App\Traits;
 
-
 use App\Answer;
 use App\AnswerType;
 use App\Poll;
@@ -26,6 +25,8 @@ trait SaveAnswer
     protected function saveAllAnswers(Request $request, Poll $poll): void
     {
         // check for range and being numeric for scoring answers
+        //...
+
         $this->checkAppAuthorization($request, $poll);
 
         $requestData = $request->answers;
@@ -39,11 +40,14 @@ trait SaveAnswer
         );
 
         foreach ($requestData as $i => $answer) {
+
             $question = Question::findOrFail($answer['question_id']);
 
             $answerItems['question_id'] = $question->id;
+
             $this->insertAnswer($question, $answer, $answerItems);
         }
+
     }
 
     /**
