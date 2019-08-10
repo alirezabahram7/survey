@@ -8,6 +8,7 @@ use App\Http\Resources\AnswerCollectionResource;
 use App\Http\Resources\BasicCollectionResource;
 use App\Http\Resources\BasicResource;
 use App\Question;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Poll;
@@ -147,10 +148,10 @@ class PollReportController extends Controller
      * @param int $perPage
      * @return \App\Http\Resources\BasicCollectionResource
      */
-    public function fetchPollAdjectiveAnswers($pollId,$perPage = 5)
+    public function fetchPollAdjectiveAnswers($pollId, $perPage = 5)
     {
-        $answers = Answer::whereHas('question',function ($q) use ($pollId){
-            $q->where('poll_id',$pollId)->adjectives();
+        $answers = Answer::whereHas('question', function ($q) use ($pollId) {
+            $q->where('poll_id', $pollId)->adjectives();
         })->with('question')->whereNotNull('answer')->paginate($perPage);;
 
         return new BasicCollectionResource($answers);
@@ -161,12 +162,33 @@ class PollReportController extends Controller
      * @param int $perPage
      * @return BasicCollectionResource
      */
-    public function fetchAdjectiveAnswers($questionId,$perPage = 5)
+    public function fetchAdjectiveAnswers($questionId, $perPage = 5)
     {
-        $answers = Answer::whereHas('question',function ($q) use ($questionId){
-            $q->where('id',$questionId)->adjectives();
+        $answers = Answer::whereHas('question', function ($q) use ($questionId) {
+            $q->where('id', $questionId)->adjectives();
         })->whereNotNull('answer')->paginate($perPage);;
 
         return new BasicCollectionResource($answers);
+    }
+
+
+    /**
+     * @param Question $question
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
+     */
+    public function fetchScoringPercentages(Question $question)
+    {
+        $percentages = [];
+        $scores = $question->fetchScores();
+        $counts = array_count_values($scores);
+        $scoringRange = $question->scoring_range;
+
+        for ($i = 1; $i <= $scoringRange; $i++) {
+            $percentages[$i] = 0;
+            if (array_key_exists($i, $counts)) {
+                $percentages[$i] = ($counts[$i] / sizeof($scores)) * 100;
+            }
+        }
+        return response($percentages);
     }
 }

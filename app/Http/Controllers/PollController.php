@@ -75,7 +75,7 @@ class PollController extends Controller
             ->with('children')
             ->with([
                 'categories.questions' => function ($q) use ($is_active_statuses,$callback) {
-                    $q->whereIn('is_active', $is_active_statuses)->whereIn('answer_type_id',[1,4])->orWhereHas(
+                    $q->whereIn('is_active', $is_active_statuses)->orWhereHas(
                         'options', $callback)->with([
                         'options' => $callback
                     ]);
@@ -84,7 +84,7 @@ class PollController extends Controller
             ->with([
                 'questions' => function ($q) use ($is_active_statuses,$callback) {
                     $q->where('questions.category_id', '=', 0)->orWhere('questions.category_id', '=',
-                        null)->whereIn('is_active', $is_active_statuses)->whereIn('answer_type_id',[1,4])->orWhereHas(
+                        null)->whereIn('is_active', $is_active_statuses)->orWhereHas(
                         'options', $callback
                     )->with([
                         'options' => $callback

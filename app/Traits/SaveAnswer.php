@@ -85,8 +85,12 @@ trait SaveAnswer
     {
         switch ($question->answer_type_id) {
             case AnswerType::ADJECTIVE:
-            case AnswerType::SCORING:
                 $answerItems['answer'] = $answer;
+                break;
+            case AnswerType::SCORING:
+                if($answer <= $question->scoring_range && $answer > 0){
+                    $answerItems['answer'] = $answer;
+                }
                 break;
             case AnswerType::RADIOBUTTON:
             case AnswerType::CHECKBOX:
