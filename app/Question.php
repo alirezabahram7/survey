@@ -98,9 +98,8 @@ class Question extends Model
     {
         $scores = [];
         if ($this->answer_type_id == AnswerType::SCORING and $this->scoring_range != null) {
-            $scores = $this->answers()->pluck('answer')->toArray();
+            $scores = $this->answers()->whereNotNull('answer')->pluck('answer')->toArray();
         }
-
         return $scores;
     }
 
