@@ -50,5 +50,5 @@ Route::middleware('basic.token')->group(function () {
     Route::get('/report/{poll}/{userId}/{appId?}', 'PollReportController@userReport');
     Route::get('/report-adjectives/{question}', 'PollReportController@fetchAdjectiveAnswers');
     Route::get('/report-poll-adjectives/{poll}', 'PollReportController@fetchPollAdjectiveAnswers');
-    Route::get('/report-scores/{question}', 'PollReportController@fetchScoringPercentages');
+    Route::get('/report-scores/{poll}', 'PollReportController@fetchScoringPercentages');
 });

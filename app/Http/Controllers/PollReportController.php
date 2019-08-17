@@ -62,6 +62,11 @@ class PollReportController extends Controller
             'question_voters_count' => $votersCount,
             'options' => $optionPercentage
         ];
+
+        if($question->answer_type_id==AnswerType::SCORING){
+            $scoringPercentages=$this->questionScoringPercentages($question,[]);
+            $result['scoring_percentages']=$scoringPercentages;
+        }
         return response($result, 200);
     }
 
@@ -139,6 +144,7 @@ class PollReportController extends Controller
      */
     protected function setDatePeriod(Request $request): void
     {
+
         $this->dateFrom = $request->has('date_from') ? $request->date_from : '1970-01-01';
         $this->dateTo = $request->has('date_to') ? $request->date_to : '3000-01-01';
     }
@@ -152,7 +158,7 @@ class PollReportController extends Controller
     {
         $answers = Answer::whereHas('question', function ($q) use ($pollId) {
             $q->where('poll_id', $pollId)->adjectives();
-        })->with('question')->whereNotNull('answer')->paginate($perPage);;
+        })->with('question')->whereNotNull('answer')->paginate($perPage);
 
         return new BasicCollectionResource($answers);
     }
@@ -176,19 +182,34 @@ class PollReportController extends Controller
      * @param Question $question
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function fetchScoringPercentages(Question $question)
+    public function fetchScoringPercentages(Poll $poll)
     {
         $percentages = [];
+
+        $scoringQuestions = $poll->questions->where('answer_type_id', AnswerType::SCORING);
+        foreach ($scoringQuestions as $question) {
+            $percentages = ($this->questionScoringPercentages($question, $percentages));
+        }
+        return response($percentages);
+    }
+
+    /**
+     * @param $question
+     * @param array $percentages
+     * @return array
+     */
+    protected function questionScoringPercentages($question, array $percentages)
+    {
         $scores = $question->fetchScores();
         $counts = array_count_values($scores);
         $scoringRange = $question->scoring_range;
 
         for ($i = 1; $i <= $scoringRange; $i++) {
-            $percentages[$i] = 0;
+            $percentages[$question->id][$i] = 0;
             if (array_key_exists($i, $counts)) {
-                $percentages[$i] = ($counts[$i] / sizeof($scores)) * 100;
+                $percentages[$question->id][$i] = (int)(($counts[$i] / sizeof($scores)) * 100);
             }
         }
-        return response($percentages);
+        return $percentages;
     }
 }
